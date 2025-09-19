@@ -1,0 +1,115 @@
+# LLM Configuration
+llm:
+  # Primary LLM provider
+  provider: "openai"  # openai, anthropic, local
+  
+  # OpenAI settings
+  openai:
+    model: "gpt-4-turbo-preview"
+    api_key: "${OPENAI_API_KEY}"
+    temperature: 0.1
+    max_tokens: 4000
+    
+  # Anthropic settings  
+  anthropic:
+    model: "claude-3-sonnet-20240229"
+    api_key: "${ANTHROPIC_API_KEY}"
+    temperature: 0.1
+    max_tokens: 4000
+    
+  # Local model settings
+  local:
+    model_path: "/path/to/local/model"
+    device: "cuda"  # cuda, cpu
+    max_memory: "8GB"
+
+# Prompt templates
+prompts:
+  spec_normalizer: |
+    You are an analog/mixed-signal design expert.
+    Convert the following natural language specification to structured JSON format.
+    
+    Requirements:
+    - Include all units and ranges
+    - Mark uncertain values with confidence levels
+    - Validate feasibility and suggest alternatives
+    - Follow the EDA-Accelerater spec schema
+    
+    Input: {spec_text}
+    
+    Output JSON schema:
+    {{
+      "block": "string",
+      "resolution_bits": int,
+      "fs_hz": float,
+      "vdd_v": float,
+      "input_range_vpp": float,
+      "power_budget_mw": float,
+      "snr_db_min": float,
+      "enob_min": float,
+      "area_mm2_max": float,
+      "priority": ["string"],
+      "process": "string",
+      "package": "string",
+      "io_spec": {{}},
+      "env": {{"temp_c": [float, float], "vdd_tol_percent": float}}
+    }}
+
+  architecture_suggester: |
+    You are an analog/mixed-signal architect.
+    Given the specification JSON, produce:
+    1) architecture.json (blocks, interfaces, measurement points)
+    2) analog vs digital partition with rationale
+    3) risks and mitigation strategies
+    
+    Constraints: N28 PDK, 1.2V, -40~125°C, ±10% VDD.
+    
+    Specification: {spec_json}
+    
+    Return only JSON + bullet points.
+
+  topology_generator: |
+    You are a senior analog designer.
+    Goal: meet GBW, PM, noise, swing, load requirements.
+    Process: N28, VDD=1.2V.
+    
+    Requirements: {requirements}
+    
+    Output:
+    - topology_choice (name + rationale)
+    - sizing_params (W/L, bias currents, comp RC)
+    - SPICE netlist code block (Spectre/HSPICE style)
+    - Verilog-A behavioral model
+    - testbenches for AC/TRAN/Noise/FFT with measurement directives
+    
+    Constraints: 
+    - Device min/max W/L per PDK
+    - Keep Vov in [120mV, 220mV]
+    - Ensure DC bias stability
+
+  optimizer: |
+    You are an analog circuit optimizer.
+    Given measurement results and current parameters, propose parameter deltas 
+    to improve the worst failing specification with minimal power increase.
+    
+    Current parameters: {current_params}
+    Measurement results: {measurement_results}
+    Target specifications: {target_specs}
+    
+    Return updated PARAMS JSON + expected trade-offs.
+
+# Safety and validation
+safety:
+  max_iterations: 50
+  timeout_seconds: 300
+  validation_checks:
+    - unit_consistency
+    - range_validation
+    - topology_completeness
+    - dc_bias_stability
+    
+  guardrails:
+    - no_pdk_data_exposure
+    - structured_output_only
+    - audit_all_operations
+    - version_locking

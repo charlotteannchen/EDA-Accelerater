@@ -1,0 +1,29 @@
+{
+  "block": "ADC",
+  "resolution_bits": 12,
+  "fs_hz": 100000000,
+  "vdd_v": 1.2,
+  "input_range_vpp": 1.0,
+  "power_budget_mw": 10,
+  "snr_db_min": 68,
+  "enob_min": 11,
+  "area_mm2_max": 0.8,
+  "priority": ["ENOB", "Power", "Area"],
+  "process": "N28",
+  "package": "QFN",
+  "io_spec": {
+    "ref_clk": 100000000,
+    "input_impedance": "high",
+    "output_drive": "low"
+  },
+  "env": {
+    "temp_c": [-40, 125],
+    "vdd_tol_percent": 10
+  },
+  "constraints": {
+    "min_gbw_hz": 50e6,
+    "min_pm_deg": 45,
+    "max_noise_nv_per_sqrt_hz": 15,
+    "max_thd_percent": 0.1
+  }
+}

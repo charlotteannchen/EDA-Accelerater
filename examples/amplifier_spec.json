@@ -1,0 +1,31 @@
+{
+  "block": "AMPLIFIER",
+  "type": "OPAMP",
+  "gbw_hz": 100000000,
+  "pm_deg": 60,
+  "vdd_v": 1.2,
+  "vss_v": 0,
+  "input_range_vpp": 1.0,
+  "output_range_vpp": 1.0,
+  "power_budget_mw": 5,
+  "noise_nv_per_sqrt_hz": 10,
+  "area_mm2_max": 0.05,
+  "priority": ["GBW", "Noise", "Power"],
+  "process": "N28",
+  "package": "QFN",
+  "io_spec": {
+    "input_impedance": "high",
+    "output_drive": "low",
+    "load_cap_f": 1e-12
+  },
+  "env": {
+    "temp_c": [-40, 125],
+    "vdd_tol_percent": 10
+  },
+  "constraints": {
+    "min_av_dc": 80,
+    "min_psrr_db": 60,
+    "min_cmrr_db": 80,
+    "max_offset_mv": 5
+  }
+}

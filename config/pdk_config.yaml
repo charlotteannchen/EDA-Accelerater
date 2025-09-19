@@ -1,0 +1,79 @@
+# PDK Configuration
+pdk:
+  name: "N28"
+  version: "1.0"
+  vdd_nom: 1.2
+  vdd_tol: 0.1  # ±10%
+  temp_range: [-40, 125]  # °C
+  
+  # Device constraints
+  devices:
+    nmos_lvt:
+      min_w: 0.1e-6  # 100nm
+      max_w: 100e-6  # 100um
+      min_l: 28e-9   # 28nm
+      max_l: 1e-6    # 1um
+      vov_min: 0.12  # 120mV
+      vov_max: 0.22  # 220mV
+      
+    pmos_lvt:
+      min_w: 0.1e-6
+      max_w: 100e-6
+      min_l: 28e-9
+      max_l: 1e-6
+      vov_min: 0.12
+      vov_max: 0.22
+      
+    resistor:
+      min_w: 0.1e-6
+      max_w: 10e-6
+      min_l: 0.1e-6
+      max_l: 100e-6
+      
+    capacitor:
+      min_c: 1e-15  # 1fF
+      max_c: 1e-9   # 1pF
+
+  # Process corners
+  corners:
+    - name: "TT"
+      temp: 25
+      vdd: 1.2
+      process: "typical"
+    - name: "SS"
+      temp: 125
+      vdd: 1.08
+      process: "slow"
+    - name: "FF"
+      temp: -40
+      vdd: 1.32
+      process: "fast"
+
+# EDA Tools
+eda_tools:
+  spectre:
+    path: "/opt/cadence/spectre"
+    version: "2023.1"
+    license_server: "license.cadence.com"
+    
+  hspice:
+    path: "/opt/synopsys/hspice"
+    version: "2023.03"
+    license_server: "license.synopsys.com"
+    
+  ngspice:
+    path: "/usr/local/bin/ngspice"
+    version: "42"
+
+# Simulation settings
+simulation:
+  default_engine: "ngspice"  # Start with open source
+  timeout: 3600  # 1 hour
+  max_iterations: 1000
+  convergence_tol: 1e-6
+  
+  # Monte Carlo settings
+  monte_carlo:
+    default_runs: 1000
+    max_runs: 10000
+    confidence_level: 0.95
